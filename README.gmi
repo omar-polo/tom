@@ -1,0 +1,76 @@
+# Tom --- a Gemini frontend for git repositories
+
+Tom aims to be a complete Gemini frontend for git repositories.  At the moment is still heavily worked on and has lots (almost all?)  missing pieces.
+
+What's working:
+
+* repository listing
+* repository page
+* file listing
+* can serve files
+* branch listing
+* tag listing
+
+What's missing:
+
+* diffs in commit log
+* blame view
+* hiding repositories
+* ...
+
+
+## Usage
+
+Tom is written in a mix of C and Lua.  To compile the C modules, execute:
+
+```
+make
+```
+
+the only dependency is zlib (on some distro `zlib-dev` or `zlib-devel` are also needed).
+
+tom.lua is the entrypoint.  Tom looks for the following variables:
+
+* `TOM_REPOS_DIR`: (mandatory) the directory that stores the git repositories to serve
+* `TOM_CLONE_URL`: (optional) the base URL for cloning the repositories
+
+Other environment variables that Tom uses are: (but are usually provided by your Gemini server)
+
+* GATEWAY_INTERFACE
+* PATH_INFO (optional)
+* SCRIPT_NAME
+
+
+## Example usage
+
+Deploying and CGI handling varies from server to server.  I'm limiting to show a little excerpt of a possible gmid configuration
+
+``` gmid example configuration
+server "tom.example.com" {
+	cert "..."
+	key  "..."
+	root "/path/to/tom"
+	cgi  "*"
+
+	# mandatory
+	env "TOM_REPOS_DIR" = "/path/to/repos/"
+
+	# optional
+	env "TOM_CLONE_URL" = "https://git.example.com"
+
+	location "/" {
+		block return 30 "/tom.lua"
+	}
+}
+```
+
+
+## Misc
+
+It's written in lua 5.3, but should *probably* work with older versions too.
+
+For comments, criticism, bug reports or patches please send an email to tom@omarpolo.com or open an issue at github.
+
+The name is a homage to "Space Oddity" by David Bowie.
+
+$Tom: README.gmi,v 1.1 2021/10/21 10:33:49 op Exp $
